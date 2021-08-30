@@ -49,12 +49,27 @@ services:
     - '9094:8084'
     networks:
       - gdt_network
+  kafkaserivce:
+    build:
+      context: ./kafkaservice
+      dockerfile: /home/mikhail/Documents/docker-compose/kafkaservice/Dockerfile
+    image: localhost/kafkaservice
+    ports:
+      - '9095:8085'
+    networks:
+      - kafka_service_network
+      - db_network
+    depends_on:
+      - kafka
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
       - '2500:2181'
     networks:
       - kafka_zookeeper_network
+    volumes:
+      - ./zoo/data:/var/lib/zookeeper/data
+      - ./zoo/log:/var/lib/zookeeper/log
   kafka:
     image: wurstmeister/kafka
     ports:
@@ -70,6 +85,9 @@ services:
     networks:
       - kafka_zookeeper_network
       - fdt_network
+      - kafka_service_network
+    volumes:
+      - ./broker/data:/var/lib/kafka/data
 volumes:
   mysql-data:
 networks:
@@ -77,3 +95,4 @@ networks:
   fdt_network: {}
   gdt_network: {}
   kafka_zookeeper_network: {}
+  kafka_service_network: {}
