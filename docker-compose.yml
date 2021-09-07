@@ -49,7 +49,19 @@ services:
     - '9094:8084'
     networks:
       - gdt_network
-  kafkaserivce:
+  adminservice:
+    #container_name: generate_date_time
+    build:
+      context: ./adminservice
+      dockerfile: /home/mikhail/Documents/docker-compose/adminservice/Dockerfile
+    image: localhost/adminservice
+    ports:
+    - '9096:8086'
+    networks:
+      - gdt_network
+    depends_on:
+      - gdtservice
+  kafkaservice:
     build:
       context: ./kafkaservice
       dockerfile: /home/mikhail/Documents/docker-compose/kafkaservice/Dockerfile
