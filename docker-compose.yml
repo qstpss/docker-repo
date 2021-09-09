@@ -12,7 +12,7 @@ services:
       - MYSQL_DATABASE=extvaldb
     volumes:
       - '/home/mikhail/Documents/docker-compose/dbservice/initDatabase.sql:/docker-entrypoint-initdb.d/1.sql'
-      - mysql-data:/home/mysql-data-volume/data # lives until docker-compose down -v
+      - ./volumes/mysql:/var/lib/mysql
     networks:
       - db_network
   dbservice:
@@ -80,8 +80,8 @@ services:
     networks:
       - kafka_zookeeper_network
     volumes:
-      - ./zoo/data:/var/lib/zookeeper/data
-      - ./zoo/log:/var/lib/zookeeper/log
+      - ./volumes/zoo/data:/opt/zookeeper-3.4.13/data
+      #- ./volumes/zoo/conf:/opt/zookeeper-3.4.13/conf
   kafka:
     image: wurstmeister/kafka
     ports:
@@ -92,6 +92,7 @@ services:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CREATE_TOPICS=date-time-topic:1:1
+      - KAFKA_LOG_DIRS=/logs
     depends_on:
       - zookeeper
     networks:
@@ -99,9 +100,7 @@ services:
       - fdt_network
       - kafka_service_network
     volumes:
-      - ./broker/data:/var/lib/kafka/data
-volumes:
-  mysql-data:
+      - ./volumes/kafka/logs:/logs
 networks:
   db_network: {}
   fdt_network: {}
