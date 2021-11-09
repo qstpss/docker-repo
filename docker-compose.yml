@@ -1,7 +1,6 @@
 version: '3.3'
 services:
   mysqldb:
-    #container_name: database
     image: mysql
     ports:
     - '3308:3306'
@@ -11,15 +10,14 @@ services:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=extvaldb
     volumes:
-      - '/home/mikhail/Documents/docker-compose/dbservice/initDatabase.sql:/docker-entrypoint-initdb.d/1.sql'
+      - './dbservice/initDatabase.sql:/docker-entrypoint-initdb.d/1.sql'
       - ./volumes/mysql:/var/lib/mysql
     networks:
       - db_network
   dbservice:
-    #container_name: database_client
     build:
       context: ./dbservice
-      dockerfile: /home/mikhail/Documents/docker-compose/dbservice/Dockerfile
+      dockerfile: ./Dockerfile
     image: localhost/dbservice
     depends_on:
       - mysqldb
@@ -29,10 +27,9 @@ services:
       - db_network
       - fdt_network
   fdtservice:
-    #container_name: format_date_time
     build:
       context: ./formatdatetimeservice
-      dockerfile: /home/mikhail/Documents/docker-compose/formatdatetimeservice/Dockerfile
+      dockerfile: ./Dockerfile
     image: localhost/fdtservice
     ports:
     - '9093:8083'
@@ -40,20 +37,18 @@ services:
       - fdt_network
       - gdt_network
   gdtservice:
-    #container_name: generate_date_time
     build:
       context: ./datetimegenerator
-      dockerfile: /home/mikhail/Documents/docker-compose/datetimegenerator/Dockerfile
+      dockerfile: ./Dockerfile
     image: localhost/gdtservice
     ports:
     - '9094:8084'
     networks:
       - gdt_network
   adminservice:
-    #container_name: generate_date_time
     build:
       context: ./adminservice
-      dockerfile: /home/mikhail/Documents/docker-compose/adminservice/Dockerfile
+      dockerfile: ./Dockerfile
     image: localhost/adminservice
     ports:
     - '9096:8086'
@@ -64,7 +59,7 @@ services:
   kafkaservice:
     build:
       context: ./kafkaservice
-      dockerfile: /home/mikhail/Documents/docker-compose/kafkaservice/Dockerfile
+      dockerfile: ./Dockerfile
     image: localhost/kafkaservice
     ports:
       - '9095:8085'
